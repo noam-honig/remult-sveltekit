@@ -9,9 +9,16 @@ export const remultServer = createRemultServer({
 });
 
 export const handleRemult = (async ({ event, resolve }) => {
+
 	// get '/api' path from "remultServer"
 	if (event.url.pathname.startsWith('/api')) {
-		const remultHandler = await remultServer.handle(event.request);
+		let json = {};
+		try {
+			json = await event.request.json();
+		} catch (error) {
+			
+		}
+		const remultHandler = await remultServer.handle({ url: event.request.url, method: event.request.method, body: json });
 
 		if (remultHandler) {
 			return new Response(JSON.stringify(remultHandler.data), { status: remultHandler.statusCode });
