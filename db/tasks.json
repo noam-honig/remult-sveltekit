@@ -1,7 +1,12 @@
 [
-  {
-    "id": 1,
-    "title": "",
-    "completed": false
-  }
+	{
+		"id": 1,
+		"title": "Hello From Svelte Kit",
+		"completed": false
+	},
+	{
+		"id": 2,
+		"title": "Hello From Svelte",
+		"completed": false
+	}
 ]

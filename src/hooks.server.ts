@@ -1,22 +1,4 @@
-import type { Handle } from '@sveltejs/kit';
-import { createRemultServer } from 'remult/server';
-import { Task } from './shared/Task';
+import { sequence } from '@sveltejs/kit/hooks';
+import { handleRemult } from './handleRemult';
 
-const remultServer = createRemultServer({
-	entities: [Task]
-});
-
-export const handle = (async ({ event, resolve }) => {
-	if (event.url.pathname.startsWith('/api')) {
-		const remultHandler = await remultServer.handle(event.request);
-
-		if (remultHandler) {
-			return new Response(JSON.stringify(remultHandler.data), { status: remultHandler.statusCode });
-		}
-
-		return new Response('remult error', { status: 501 });
-	}
-
-	const response = await resolve(event);
-	return response;
-}) satisfies Handle;
+export const handle = sequence(handleRemult);
