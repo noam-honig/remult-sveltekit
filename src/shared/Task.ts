@@ -8,7 +8,7 @@ export class Task {
 	id = 0;
 
 	@Fields.string({
-		// validate: Validators.required
+		// validate: Validators.required 
 	})
 	title = '';
 

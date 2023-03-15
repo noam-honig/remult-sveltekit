@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { remult } from 'remult';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { writable } from 'svelte/store';
 	import { Task } from '../shared/Task';
 
@@ -11,15 +11,13 @@
 
 	onMount(async () => {
 		// 1/ Default
-		$tasks = await taskRepo.find();
+		//$tasks = await taskRepo.find();
 
 		// 2/ Showing limits
 		// tasks = await taskRepo.find({ limit: 1 });
 
 		// 3/ Showing live (not working atm)
-		// taskRepo.liveQuery().subscribe((info) => {
-		// 	$tasks = info.items;
-		// });
+		return taskRepo.liveQuery().subscribe((x) => ($tasks = x.applyChanges($tasks)));
 	});
 
 	const addTask = async (e: Event) => {
@@ -29,9 +27,13 @@
 
 		$tasks = [...$tasks, newTask];
 	};
+	const deleteTask = async (task: Task) => {
+		await taskRepo.delete(task);
+		$tasks = $tasks.filter((t) => t !== task);
+	};
 
 	const updateList = async () => {
-		await taskRepo.save({ ...$tasks });
+		await taskRepo.save([...$tasks]);
 	};
 </script>
 
@@ -44,5 +46,6 @@
 		<input type="checkbox" bind:checked={task.completed} on:change={updateList} />
 		<input bind:value={task.title} />
 		<button on:click={updateList}>Save</button>
+		<button on:click={() => deleteTask(task)}>Delete</button>
 	</div>
 {/each}
